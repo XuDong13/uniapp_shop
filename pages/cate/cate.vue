@@ -32,7 +32,9 @@
 </template>
 
 <script>
+  import mixin from '@/mixins/tab-badge.js'
   export default {
+    mixins: [mixin],
     data() {
       return {
         // 当前设备的可使用窗口高度

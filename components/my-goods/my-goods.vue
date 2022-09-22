@@ -2,6 +2,7 @@
   <view class="goods-item">
     <!-- 左侧 -->
     <view class="goods-item-left">
+      <radio :checked="goods.goods_state" color="#c00000" v-if="radio" @click="radioChange" />
       <image :src="goods.goods_small_logo||defaultPic" class="goods-img"></image>
     </view>
     <!-- 右侧 -->
@@ -9,8 +10,11 @@
       <view class="goods-title">
         {{goods.goods_name}}
       </view>
-      <view class="goods-price">
-        ￥{{goods.goods_price | tofixed}}
+      <view class="goods-title-pricebox">
+        <view class="goods-price">
+          ￥{{goods.goods_price | tofixed}}
+        </view>
+        <uni-number-box :value="goods.goods_count" min="1" v-if="numberBox" @change="numChangeHandler"></uni-number-box>
       </view>
     </view>
   </view>
@@ -23,6 +27,14 @@
       goods: {
         type: Object,
         default: {}
+      },
+      radio: {
+        type: Boolean,
+        dafault: false
+      },
+      numberBox: {
+        type: Boolean,
+        dafault: false
       }
     },
     data() {
@@ -33,6 +45,20 @@
     filters: {
       tofixed(num) {
         return Number(num).toFixed(2)
+      }
+    },
+    methods: {
+      radioChange() {
+        this.$emit('radioClick', {
+          goods_id: this.goods.goods_id,
+          goods_state: !this.goods.goods_state
+        })
+      },
+      numChangeHandler(val) {
+        this.$emit('numClick', {
+          goods_id: this.goods.goods_id,
+          goods_count: val
+        })
       }
     }
   }
@@ -47,6 +73,9 @@
 
     .goods-item-left {
       margin-right: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
 
       .goods-img {
         width: 100px;
@@ -58,14 +87,22 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      flex: 1;
 
       .goods-title {
         font-size: 13px;
       }
 
-      .goods-price {
-        color: #c00000;
-        font-size: 16px;
+      .goods-title-pricebox {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+
+        .goods-price {
+          color: #c00000;
+          font-size: 16px;
+        }
       }
     }
   }
